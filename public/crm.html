@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Order Desk</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  /* Layout: the private side of the trading booth. A blotter of incoming hire orders, one ticket per request. */
+  :root {
+    --bg: #f1eee8; --surface: #fffdf8; --ink: #15130f; --muted: #5d584f; --edge: #15130f;
+    --blue: #3d35f0; --on-blue: #ffffff; --yellow: #ffcf33; --on-yellow: #15130f; --green: #0b9a5c; --red: #dd3a34;
+    --display: "Archivo", "Arial Black", sans-serif; --body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif; --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #131118; --surface: #1e1b27; --ink: #f3efe6; --muted: #aaa3b5; --edge: #f3efe6; --blue: #7d77ff; --on-blue: #0f0d14; --green: #2fd08a; --red: #ff6a63; color-scheme: dark; }
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.5; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 28px max(18px, env(safe-area-inset-right, 0px)) 60px max(18px, env(safe-area-inset-left, 0px)); }
+  h1 { font-family: var(--display); font-weight: 900; font-stretch: 112%; text-transform: uppercase; letter-spacing: -0.03em; line-height: 0.9; font-size: clamp(2.2rem, 8vw, 4.2rem); margin: 0; }
+  h1 b { color: var(--blue); }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+  .mono { font-family: var(--mono); font-size: 0.8rem; }
+  .muted { color: var(--muted); }
+  .hard { background: var(--surface); border: 2.5px solid var(--edge); box-shadow: 6px 6px 0 var(--edge); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 16px; font-family: var(--mono); font-weight: 600; font-size: 0.85rem; background: var(--surface); color: var(--ink); border: 2.5px solid var(--edge); box-shadow: 3px 3px 0 var(--edge); cursor: pointer; }
+  .btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--edge); }
+  .btn.green { background: var(--green); color: #fff; }
+  .btn.red { background: var(--red); color: #fff; }
+  .btn.small { padding: 6px 10px; font-size: 0.76rem; box-shadow: 2px 2px 0 var(--edge); }
+  .btn:disabled { opacity: .6; cursor: default; }
+  input, select, textarea { width: 100%; padding: 9px 10px; font-size: 16px; background: var(--bg); border: 2px solid var(--edge); border-radius: 0; }
+  textarea { resize: vertical; font-family: var(--body); }
+  label { font-family: var(--mono); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em; color: var(--muted); display: block; margin-bottom: 4px; }
+
+  .login { max-width: 420px; margin: 12vh auto 0; }
+  .login form { padding: 22px; display: grid; gap: 14px; margin-top: 22px; }
+  .err { color: var(--red); font-family: var(--mono); font-size: 0.82rem; min-height: 1.2em; }
+
+  .top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 16px; }
+  .top .acts { display: flex; flex-wrap: wrap; gap: 10px; }
+  .counts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 26px 0 18px; }
+  .counts button { text-align: left; padding: 14px 16px; background: var(--surface); border: 0; border-right: 2px solid var(--edge); cursor: pointer; }
+  .counts button:last-child { border-right: 0; }
+  .counts button[aria-pressed="true"] { background: var(--yellow); color: var(--on-yellow); }
+  .counts button[aria-pressed="true"] span { color: var(--on-yellow); }
+  .counts b { display: block; font-family: var(--display); font-weight: 800; font-size: 2rem; line-height: 1; font-variant-numeric: tabular-nums; }
+  .counts span { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+  .list { display: grid; gap: 22px; }
+  .empty { padding: 34px 22px; text-align: center; }
+  .lead-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 14px; padding: 10px 16px; border-bottom: 2.5px solid var(--edge); font-family: var(--mono); font-weight: 600; font-size: 0.8rem; align-items: center; }
+  .pill { padding: 3px 9px; border: 2px solid var(--edge); font-size: 0.74rem; }
+  .pill[data-s="new"] { background: var(--yellow); color: var(--on-yellow); }
+  .pill[data-s="talking"] { background: var(--blue); color: var(--on-blue); }
+  .pill[data-s="accepted"] { background: var(--green); color: #fff; }
+  .pill[data-s="declined"] { background: var(--red); color: #fff; }
+  .lead-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; padding: 18px 16px 20px; }
+  .who h2 { font-family: var(--display); font-weight: 800; font-size: 1.5rem; letter-spacing: -0.015em; margin: 0; line-height: 1.1; overflow-wrap: anywhere; }
+  .who .co { color: var(--muted); margin-top: 2px; overflow-wrap: anywhere; }
+  .who .mail { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; }
+  .who code { font-family: var(--mono); font-size: 0.86rem; user-select: all; overflow-wrap: anywhere; }
+  .msg { margin-top: 14px; padding: 12px; border: 2px dashed var(--edge); white-space: pre-wrap; overflow-wrap: anywhere; }
+  .work { display: grid; gap: 12px; align-content: start; min-width: 0; }
+  .row-acts { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .saved { font-family: var(--mono); font-size: 0.78rem; color: var(--green); }
+  @media (max-width: 720px) { .lead-body { grid-template-columns: minmax(0, 1fr); } .counts { grid-template-columns: repeat(2, minmax(0, 1fr)); } .counts button:nth-child(2) { border-right: 0; } .counts button:nth-child(-n+2) { border-bottom: 2px solid var(--edge); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="login" id="login" hidden>
+    <p class="mono muted">PRIVATE · ANWESHAMULGE.COM</p>
+    <h1>Order <b>desk</b></h1>
+    <form class="hard" id="login-form">
+      <div><label for="pw">PASSWORD</label><input id="pw" type="password" autocomplete="current-password" required></div>
+      <button class="btn green" type="submit" id="login-go">Sign in</button>
+      <div class="err" id="login-err" aria-live="polite"></div>
+    </form>
+  </div>
+
+  <div id="app" hidden>
+    <div class="top">
+      <div><p class="mono muted" style="margin:0 0 8px">PRIVATE · HIRE ORDERS FROM ANWESHAMULGE.COM</p><h1>Order <b>desk</b></h1></div>
+      <div class="acts"><button class="btn" id="refresh" type="button">Refresh</button><a class="btn" href="/" style="text-decoration:none">View site</a><button class="btn" id="logout" type="button">Sign out</button></div>
+    </div>
+    <div class="counts hard" id="counts"></div>
+    <div class="list" id="list"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var LABEL = { 'new': 'New', talking: 'In talks', accepted: 'Accepted', declined: 'Declined' };
+  var ORDER = ['new', 'talking', 'accepted', 'declined'];
+  var leads = [], filter = 'all';
+  var $ = function (id) { return document.getElementById(id); };
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function api(method, path, body) {
+    return fetch(path, { method: method, headers: body ? { 'Content-Type': 'application/json' } : {}, body: body ? JSON.stringify(body) : undefined, credentials: 'same-origin' })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (r.status === 401 && path !== '/api/login') { show(false); } if (!r.ok) throw new Error(j.error || 'Request failed.'); return j; }); });
+  }
+  function show(authed) { $('login').hidden = authed; $('app').hidden = !authed; if (!authed) $('pw').focus(); }
+
+  function renderCounts() {
+    var c = $('counts'); c.innerHTML = '';
+    [['all', 'All orders']].concat(ORDER.slice(0, 3).map(function (s) { return [s, LABEL[s]]; })).forEach(function (p) {
+      var n = p[0] === 'all' ? leads.length : leads.filter(function (l) { return l.status === p[0]; }).length;
+      var b = el('button'); b.type = 'button'; b.setAttribute('aria-pressed', filter === p[0] ? 'true' : 'false');
+      b.appendChild(el('b', '', String(n))); b.appendChild(el('span', '', p[1].toUpperCase()));
+      b.addEventListener('click', function () { filter = filter === p[0] ? 'all' : p[0]; render(); });
+      c.appendChild(b);
+    });
+  }
+  function card(l) {
+    var card = el('article', 'hard');
+    var head = el('div', 'lead-head');
+    head.appendChild(el('span', '', 'ORDER #' + l.id.slice(0, 6).toUpperCase() + ' · ' + l.role.toUpperCase()));
+    var right = el('span'); right.style.cssText = 'display:flex;gap:10px;align-items:center;flex-wrap:wrap';
+    right.appendChild(el('span', 'muted', new Date(l.createdAt).toLocaleString(undefined, { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })));
+    var pill = el('span', 'pill', LABEL[l.status].toUpperCase()); pill.setAttribute('data-s', l.status); right.appendChild(pill);
+    head.appendChild(right); card.appendChild(head);
+
+    var body = el('div', 'lead-body'), who = el('div', 'who'), work = el('div', 'work');
+    who.appendChild(el('h2', '', l.name));
+    if (l.company) who.appendChild(el('p', 'co', l.company));
+    var mail = el('div', 'mail'); mail.appendChild(el('code', '', l.email));
+    var cp = el('button', 'btn small', 'Copy'); cp.type = 'button';
+    cp.addEventListener('click', function () { try { navigator.clipboard.writeText(l.email).then(function () { cp.textContent = 'Copied'; setTimeout(function () { cp.textContent = 'Copy'; }, 1400); }); } catch (e) {} });
+    mail.appendChild(cp); who.appendChild(mail);
+    who.appendChild(el('div', 'msg', l.message || 'No message.'));
+
+    function field(labelText, node, id) { var d = el('div'), lb = el('label', '', labelText); lb.htmlFor = id; node.id = id; d.appendChild(lb); d.appendChild(node); return d; }
+    var sel = el('select'); ORDER.forEach(function (s) { var o = el('option', '', LABEL[s]); o.value = s; if (s === l.status) o.selected = true; sel.appendChild(o); });
+    var reply = el('textarea'); reply.rows = 3; reply.maxLength = 2000; reply.value = l.reply || ''; reply.placeholder = 'They see this on their order page, and by email if you choose.';
+    var notes = el('textarea'); notes.rows = 2; notes.maxLength = 4000; notes.value = l.notes || ''; notes.placeholder = 'Only you see this.';
+    work.appendChild(field('STATUS (THEY SEE IT)', sel, 's-' + l.id));
+    work.appendChild(field('YOUR REPLY (THEY SEE IT)', reply, 'r-' + l.id));
+    work.appendChild(field('PRIVATE NOTES', notes, 'n-' + l.id));
+    var acts = el('div', 'row-acts'), save = el('button', 'btn green', 'Save and email them'), only = el('button', 'btn', 'Save only'), del = el('button', 'btn small', 'Delete'), yes = el('button', 'btn small red', 'Yes, delete'), note = el('span', 'saved');
+    save.type = only.type = del.type = yes.type = 'button'; yes.hidden = true;
+    var mailed = el('p', 'mono muted'); mailed.style.margin = '0';
+    function mailLine() { mailed.textContent = l.emailedAt ? 'Last emailed ' + new Date(l.emailedAt).toLocaleString(undefined, { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) + '.' : 'Not emailed yet.'; }
+    mailLine();
+    function doSave(sendEmail) {
+      save.disabled = only.disabled = true; note.textContent = '';
+      api('PATCH', '/api/leads', { id: l.id, status: sel.value, reply: reply.value, notes: notes.value, sendEmail: sendEmail })
+        .then(function (j) {
+          Object.assign(l, j.lead); pill.textContent = LABEL[l.status].toUpperCase(); pill.setAttribute('data-s', l.status); renderCounts(); mailLine();
+          if (!sendEmail) { note.style.color = ''; note.textContent = 'Saved. They see it on their order page.'; }
+          else if (j.email && j.email.sent) { note.style.color = ''; note.textContent = 'Saved and emailed to ' + l.email + '.'; }
+          else { note.style.color = 'var(--red)'; note.textContent = 'Saved, but the email did not send. ' + ((j.email && j.email.reason) || ''); }
+        })
+        .catch(function (e) { note.style.color = 'var(--red)'; note.textContent = e.message; })
+        .then(function () { save.disabled = only.disabled = false; });
+    }
+    save.addEventListener('click', function () { doSave(true); });
+    only.addEventListener('click', function () { doSave(false); });
+    del.addEventListener('click', function () { yes.hidden = !yes.hidden; del.textContent = yes.hidden ? 'Delete' : 'Cancel'; });
+    yes.addEventListener('click', function () { yes.disabled = true; api('DELETE', '/api/leads', { id: l.id }).then(function () { leads = leads.filter(function (x) { return x.id !== l.id; }); render(); }).catch(function (e) { note.style.color = 'var(--red)'; note.textContent = e.message; yes.disabled = false; }); });
+    acts.appendChild(save); acts.appendChild(only); acts.appendChild(del); acts.appendChild(yes); acts.appendChild(note); work.appendChild(acts); work.appendChild(mailed);
+    body.appendChild(who); body.appendChild(work); card.appendChild(body);
+    return card;
+  }
+  function render() {
+    renderCounts();
+    var list = $('list'); list.innerHTML = '';
+    var shown = leads.filter(function (l) { return filter === 'all' || l.status === filter; });
+    if (!shown.length) { var e = el('div', 'hard empty'); e.appendChild(el('p', '', leads.length ? 'No orders with this status.' : 'No orders yet. When someone presses "Place order" on your site, it shows up here.')); list.appendChild(e); return; }
+    shown.forEach(function (l) { list.appendChild(card(l)); });
+  }
+  function load() { $('refresh').disabled = true; return api('GET', '/api/leads').then(function (j) { leads = j.leads; render(); }).catch(function () {}).then(function () { $('refresh').disabled = false; }); }
+
+  $('login-form').addEventListener('submit', function (e) {
+    e.preventDefault(); $('login-err').textContent = ''; $('login-go').disabled = true;
+    api('POST', '/api/login', { password: $('pw').value })
+      .then(function () { $('pw').value = ''; show(true); return load(); })
+      .catch(function (err) { $('login-err').textContent = err.message; })
+      .then(function () { $('login-go').disabled = false; });
+  });
+  $('logout').addEventListener('click', function () { api('DELETE', '/api/login').then(function () { leads = []; show(false); }); });
+  $('refresh').addEventListener('click', load);
+  api('GET', '/api/login').then(function (j) { show(!!j.authed); if (j.authed) load(); }).catch(function () { show(false); });
+})();
+</script>
+</body>
+</html>

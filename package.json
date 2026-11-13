@@ -1,0 +1,1 @@
+{ "name": "anwesha-mulge-site", "private": true, "dependencies": { "@vercel/blob": "^2.0.0" } }
