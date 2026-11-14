@@ -248,6 +248,14 @@
   .hire { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 40px; align-items: center; padding-block: 0 70px; }
   .hire h2 { font-size: clamp(2.4rem, 8vw, 5.6rem); font-weight: 900; font-stretch: 112%; text-transform: uppercase; letter-spacing: -0.035em; line-height: 0.88; }
   .hire h2 b { color: var(--blue); }
+  .hire-left { min-width: 0; display: grid; gap: 30px; }
+  .direct { display: grid; gap: 10px; max-width: 460px; }
+  .direct-label { font-family: var(--mono); font-size: 0.74rem; font-weight: 600; letter-spacing: 0.08em; color: var(--muted); }
+  .drow { display: grid; grid-template-columns: 62px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 12px; background: var(--surface); border: 2px solid var(--edge); }
+  .dk { font-family: var(--mono); font-size: 0.74rem; color: var(--muted); }
+  .dv { font-family: var(--mono); font-weight: 600; font-size: 0.95rem; text-decoration: none; overflow-wrap: anywhere; }
+  .dv:hover { color: var(--blue); }
+  .small-copy { padding: 6px 10px; font-size: 0.74rem; box-shadow: 2px 2px 0 var(--edge); }
   .order { background: var(--surface); }
   .order-head { display: flex; justify-content: space-between; padding: 10px 16px; border-bottom: 2.5px solid var(--edge); font-family: var(--mono); font-weight: 600; font-size: 0.8rem; }
   .order-body { padding: 18px 16px 20px; display: grid; gap: 14px; }
@@ -594,7 +602,14 @@
     </section>
 
     <div class="hire" id="hire">
-      <h2>Go long<br>on <b>Anwesha.</b></h2>
+      <div class="hire-left">
+        <h2>Go long<br>on <b>Anwesha.</b></h2>
+        <div class="direct">
+          <p class="direct-label">OR REACH ME DIRECTLY</p>
+          <div class="drow"><span class="dk">Email</span><a class="dv" href="mailto:anweshamulge2@gmail.com">anweshamulge2@gmail.com</a><button class="btn small-copy" type="button" data-copy="anweshamulge2@gmail.com">Copy</button></div>
+          <div class="drow"><span class="dk">Phone</span><a class="dv" href="tel:+919604896235">+91 96048 96235</a><button class="btn small-copy" type="button" data-copy="+91 96048 96235">Copy</button></div>
+        </div>
+      </div>
       <div class="order hard">
         <div class="order-head"><span>ORDER TICKET</span><span>ANWESHA / HIRE</span></div>
         <form class="order-body" id="o-form" novalidate>
@@ -629,7 +644,7 @@
       </div>
     </div>
 
-    <footer class="foot"><span>Anwesha Mulge · Pune, India</span><a href="https://www.linkedin.com/in/anwesha-mulge-5b8b76350" target="_blank" rel="noopener">LinkedIn ↗</a><a href="https://github.com/anu33999" target="_blank" rel="noopener">github.com/anu33999 ↗</a></footer>
+    <footer class="foot"><span>Anwesha Mulge · Pune, India</span><a href="mailto:anweshamulge2@gmail.com">anweshamulge2@gmail.com</a><a href="tel:+919604896235">+91 96048 96235</a><a href="https://www.linkedin.com/in/anwesha-mulge-5b8b76350" target="_blank" rel="noopener">LinkedIn ↗</a><a href="https://github.com/anu33999" target="_blank" rel="noopener">github.com/anu33999 ↗</a></footer>
   </div>
 </div>
 
@@ -648,7 +663,7 @@
     trading: ['Passed both phases with <span class="y">FundingPips</span> and <span class="y">FundedNext</span>.', 'Payouts on funded accounts: <span class="p">$10K ✔  $25K ✔  $100K ✔</span>', 'Style: price action at support and resistance. Forex and gold.', 'Rule #1: fixed risk per trade. Rule #2: see rule #1.'],
     skills: ['<span class="y">code</span>     Python, TypeScript, JavaScript, Java, C, C++, SQL, MQL5', '<span class="y">web</span>      React, Next.js, Tailwind, Node.js, FastAPI, Prisma, PostgreSQL', '<span class="y">markets</span>  forex, crypto, stocks, gold, indices, options', '<span class="y">trading</span>  price action, technical + fundamental analysis, backtesting, risk'],
     certs: ['2026  Financial Engineering and Risk Management, Columbia (Coursera)', '2026  NLP with Python (Udemy)', '2026  Google Data Foundations (Coursera)', '2026  Advanced Price Action Trading (Haven Ark)', '2025  Artificial Intelligence Training (Corizo)', '2026  Hackbricks Hackathon (MIT Bengaluru ACM, Databricks)', '2024  Financial Marketing (Coursera)', '2024  Ethical Hacking Essentials (Coursera)'],
-    contact: ['email   <span class="y">' + EMAIL + '</span>', 'github  <span class="y">github.com/anu33999</span>', 'linkedin  <span class="y">linkedin.com/in/anwesha-mulge-5b8b76350</span>'],
+    contact: ['email   <span class="y">' + EMAIL + '</span>', 'phone   <span class="y">+91 96048 96235</span>', 'github  <span class="y">github.com/anu33999</span>', 'linkedin  <span class="y">linkedin.com/in/anwesha-mulge-5b8b76350</span>'],
     'sudo hire anwesha': ['<span class="m">[sudo] password for recruiter: ********</span>', '<span class="p">Permission granted.</span> Good call.', 'Next step: email <span class="y">' + EMAIL + '</span>'],
     'hire anwesha': ['<span class="y">permission denied.</span> Try it with sudo.']
   };
@@ -729,6 +744,15 @@
   [fa, fr, fs].forEach(function (f) { f.addEventListener('input', calc); });
   document.getElementById('presets').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) { fa.value = b.dataset.v; calc(); } });
   calc();
+
+  /* ---------- copy buttons for email and phone ---------- */
+  document.querySelectorAll('[data-copy]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var v = b.getAttribute('data-copy');
+      function ok() { b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy'; }, 1500); }
+      try { navigator.clipboard.writeText(v).then(ok, function () {}); } catch (e) {}
+    });
+  });
 
   /* ---------- hire order: saved to my private CRM ---------- */
   var oForm = document.getElementById('o-form'), oStat = document.getElementById('o-status'), oFill = document.getElementById('o-fill'), oGo = document.getElementById('o-go');
