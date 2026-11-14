@@ -109,7 +109,9 @@ async function build() {
     if (!auto.desc) auto = Object.assign({}, fromHtml(await text(raw + 'index.html')), auto.title ? { title: auto.title } : {});
     const concept = /design concept|demo redesign/i.test(md);
     // live: null in CURATED means "no live site": skip the name-guess, which can hit another person's deployment.
-    const live = 'live' in cur ? cur.live : (repo.homepage || (await vercelLive(repo.name)));
+    // Live link only from a hand-written entry or the repo's own Website field.
+    // (Guessing <name>.vercel.app matched other people's sites, so it is not used.)
+    const live = 'live' in cur ? cur.live : (repo.homepage || '');
     const links = [];
     if (live) links.push(['Live site ↗', live]);
     links.push(['Code ↗', repo.html_url]);
