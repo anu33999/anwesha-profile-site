@@ -128,6 +128,15 @@ async function build() {
       updated: repo.pushed_at
     };
   }));
+  // Private repos the feed can't read but should still show (live demo only, no code link).
+  const PRIVATE_SHOWCASE = ['kreatif-ngo-platform'];
+  for (const name of PRIVATE_SHOWCASE) {
+    const cur = CURATED[name];
+    if (!cur || items.some((x) => x.repo === name)) continue;
+    items.push({ repo: name, file: cur.file || name, path: 'projects/' + (cur.file || name), title: cur.title, kind: cur.kind || 'PROJECT',
+      desc: cur.desc, pts: cur.pts || [], stack: cur.stack || ['Next.js', 'TypeScript', 'Prisma', 'PostgreSQL', 'Tailwind CSS'],
+      links: cur.live ? [['Live site ↗', cur.live]] : [], updated: '' });
+  }
   items.sort((a, b) => {
     const ia = ORDER.indexOf(a.repo), ib = ORDER.indexOf(b.repo);
     if (ia !== -1 || ib !== -1) return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
