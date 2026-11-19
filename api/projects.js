@@ -43,7 +43,7 @@ const CURATED = {
     stack: ['Python', 'PyTorch', 'Hugging Face Transformers', 'scikit-learn', 'pandas'],
     live: null // fake-news-bert.vercel.app belongs to someone else
   },
-  'dl-exam-prep': { title: 'Deep Learning Exam Prep', kind: 'STUDY', file: 'dl-exam-prep', desc: 'An exam-prep site for my Deep Learning course, with a syllabus checklist that tracks progress and lecture content with figures.', live: null },
+  'dl-exam-prep': { title: 'Deep Learning Exam Prep', kind: 'STUDY', file: 'dl-exam-prep', desc: 'An exam-prep site for my Deep Learning course, with a syllabus checklist that tracks progress and lecture content with figures.', live: 'https://dl-exam-system.vercel.app' },
   'helping-hands-website': { title: 'Helping Hands Humanity', kind: 'CONCEPT', file: 'hhh-site.tsx' },
   'agape-india-website': { title: 'Agape India', kind: 'CONCEPT', file: 'agape-site.tsx' },
   'crwds-website': { title: 'CRWDS', kind: 'CONCEPT', file: 'crwds-site.tsx' },
