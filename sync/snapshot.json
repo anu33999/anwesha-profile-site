@@ -1,5 +1,5 @@
 {
- "checked": "2026-11-18",
+ "checked": "2026-11-19",
  "repos": {
   "agape-india-website": {
    "pushed_at": "2026-11-14T05:17:24Z",
@@ -7,7 +7,7 @@
    "description": ""
   },
   "anwesha-profile-site": {
-   "pushed_at": "2026-11-17T11:37:00Z",
+   "pushed_at": "2026-11-18T05:14:41Z",
    "homepage": "https://anweshamulge.com",
    "description": ""
   },
@@ -56,11 +56,6 @@
    "homepage": "",
    "description": ""
   },
-  "kreatif-ngo-platform": {
-   "pushed_at": "2026-11-14T05:19:30Z",
-   "homepage": "https://ngo-crm-new.vercel.app",
-   "description": ""
-  },
   "linkedin-visuals": {
    "pushed_at": "2026-11-13T17:38:33Z",
    "homepage": "",
@@ -69,6 +64,11 @@
   "pipes": {
    "pushed_at": "2026-06-22T20:43:56Z",
    "homepage": "https://mahanandipipes.com",
+   "description": ""
+  },
+  "kreatif-ngo-platform": {
+   "pushed_at": "2026-11-14T05:19:30Z",
+   "homepage": "https://ngo-crm-new.vercel.app",
    "description": ""
   }
  },
@@ -82,14 +82,16 @@
   "NGO Intelligence and Outreach CRM"
  ],
  "vercel_projects": [
+  "nlp-exam-system",
+  "dl-exam-system",
   "anwesha-mulge",
-  "agape.website",
-  "helping.hands",
   "conare-site",
-  "aurelius-radar",
   "hhfdemoupdated",
-  "hhfdemo",
+  "helping.hands",
+  "agape.website",
   "ngo-crm-new",
+  "aurelius-radar",
+  "hhfdemo",
   "ngo-crm-new-vnra",
   "ashraya-crm-b7x8",
   "ashraya-crm-bpda",
