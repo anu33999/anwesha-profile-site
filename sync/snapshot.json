@@ -1,102 +1,102 @@
 {
- "checked": "2026-11-21",
- "repos": {
-  "agape-india-website": {
-   "pushed_at": "2026-11-14T05:17:24Z",
-   "homepage": "https://agape-demo-website.vercel.app",
-   "description": ""
+  "checked": "2026-11-22",
+  "repos": {
+    "agape-india-website": {
+      "pushed_at": "2026-11-14T05:17:24Z",
+      "homepage": "https://agape-demo-website.vercel.app",
+      "description": ""
+    },
+    "anwesha-profile-site": {
+      "pushed_at": "2026-11-18T05:14:41Z",
+      "homepage": "https://anweshamulge.com",
+      "description": ""
+    },
+    "aurelius-radar": {
+      "pushed_at": "2026-11-14T05:13:41Z",
+      "homepage": "https://aurelius-radar.vercel.app",
+      "description": ""
+    },
+    "conare-site": {
+      "pushed_at": "2026-11-17T11:25:17Z",
+      "homepage": "https://conare-site.vercel.app",
+      "description": "CONARE website design concept by Kreatif Atelier (not the official site)"
+    },
+    "crwds-website": {
+      "pushed_at": "2026-11-14T05:16:20Z",
+      "homepage": "",
+      "description": ""
+    },
+    "dl-exam-prep": {
+      "pushed_at": "2026-11-13T17:34:46Z",
+      "homepage": "",
+      "description": ""
+    },
+    "donbosco-south-asia": {
+      "pushed_at": "2026-11-14T05:15:48Z",
+      "homepage": "",
+      "description": ""
+    },
+    "fake-news-bert": {
+      "pushed_at": "2026-11-13T17:36:26Z",
+      "homepage": "",
+      "description": ""
+    },
+    "helping-hand-foundation-website": {
+      "pushed_at": "2026-11-14T05:18:59Z",
+      "homepage": "https://hhfdemoupdated.vercel.app",
+      "description": ""
+    },
+    "helping-hands-website": {
+      "pushed_at": "2026-11-14T05:17:56Z",
+      "homepage": "https://helpinghandshumanitydemo.vercel.app",
+      "description": ""
+    },
+    "kreatif-growth-hq": {
+      "pushed_at": "2026-11-14T05:16:51Z",
+      "homepage": "",
+      "description": ""
+    },
+    "linkedin-visuals": {
+      "pushed_at": "2026-11-13T17:38:33Z",
+      "homepage": "",
+      "description": ""
+    },
+    "pipes": {
+      "pushed_at": "2026-06-22T20:43:56Z",
+      "homepage": "https://mahanandipipes.com",
+      "description": ""
+    },
+    "kreatif-ngo-platform": {
+      "pushed_at": "2026-11-14T05:19:30Z",
+      "homepage": "https://ngo-crm-new.vercel.app",
+      "description": ""
+    }
   },
-  "anwesha-profile-site": {
-   "pushed_at": "2026-11-18T05:14:41Z",
-   "homepage": "https://anweshamulge.com",
-   "description": ""
-  },
-  "aurelius-radar": {
-   "pushed_at": "2026-11-14T05:13:41Z",
-   "homepage": "https://aurelius-radar.vercel.app",
-   "description": ""
-  },
-  "conare-site": {
-   "pushed_at": "2026-11-17T11:25:17Z",
-   "homepage": "https://conare-site.vercel.app",
-   "description": "CONARE website design concept by Kreatif Atelier (not the official site)"
-  },
-  "crwds-website": {
-   "pushed_at": "2026-11-14T05:16:20Z",
-   "homepage": "",
-   "description": ""
-  },
-  "dl-exam-prep": {
-   "pushed_at": "2026-11-13T17:34:46Z",
-   "homepage": "",
-   "description": ""
-  },
-  "donbosco-south-asia": {
-   "pushed_at": "2026-11-14T05:15:48Z",
-   "homepage": "",
-   "description": ""
-  },
-  "fake-news-bert": {
-   "pushed_at": "2026-11-13T17:36:26Z",
-   "homepage": "",
-   "description": ""
-  },
-  "helping-hand-foundation-website": {
-   "pushed_at": "2026-11-14T05:18:59Z",
-   "homepage": "https://hhfdemoupdated.vercel.app",
-   "description": ""
-  },
-  "helping-hands-website": {
-   "pushed_at": "2026-11-14T05:17:56Z",
-   "homepage": "https://helpinghandshumanitydemo.vercel.app",
-   "description": ""
-  },
-  "kreatif-growth-hq": {
-   "pushed_at": "2026-11-14T05:16:51Z",
-   "homepage": "",
-   "description": ""
-  },
-  "linkedin-visuals": {
-   "pushed_at": "2026-11-13T17:38:33Z",
-   "homepage": "",
-   "description": ""
-  },
-  "pipes": {
-   "pushed_at": "2026-06-22T20:43:56Z",
-   "homepage": "https://mahanandipipes.com",
-   "description": ""
-  },
-  "kreatif-ngo-platform": {
-   "pushed_at": "2026-11-14T05:19:30Z",
-   "homepage": "https://ngo-crm-new.vercel.app",
-   "description": ""
-  }
- },
- "linkedin_projects": [
-  "Fake News Classifier (BERT)",
-  "Kreatif Growth HQ: Content and Client Growth OS",
-  "Personal Portfolio and Hire CRM (anweshamulge.com)",
-  "Aurelius Radar: Client Intelligence for Kreatif Atelier",
-  "NGO Website Concepts: HHF, CONARE, Helping Hands Humanity, Agape India, CRWDS, Don Bosco",
-  "Mahanandi Pipes Company Website",
-  "NGO Intelligence and Outreach CRM"
- ],
- "vercel_projects": [
-  "nlp-exam-system",
-  "dl-exam-system",
-  "anwesha-mulge",
-  "conare-site",
-  "hhfdemoupdated",
-  "helping.hands",
-  "agape.website",
-  "ngo-crm-new",
-  "aurelius-radar",
-  "hhfdemo",
-  "ngo-crm-new-vnra",
-  "ashraya-crm-b7x8",
-  "ashraya-crm-bpda",
-  "ashraya-crm",
-  "pipes",
-  "mahanandipipes-main"
- ]
+  "linkedin_projects": [
+    "Fake News Classifier (BERT)",
+    "Kreatif Growth HQ: Content and Client Growth OS",
+    "Personal Portfolio and Hire CRM (anweshamulge.com)",
+    "Aurelius Radar: Client Intelligence for Kreatif Atelier",
+    "NGO Website Concepts: HHF, CONARE, Helping Hands Humanity, Agape India, CRWDS, Don Bosco",
+    "Mahanandi Pipes Company Website",
+    "NGO Intelligence and Outreach CRM"
+  ],
+  "vercel_projects": [
+    "nlp-exam-system",
+    "dl-exam-system",
+    "anwesha-mulge",
+    "conare-site",
+    "hhfdemoupdated",
+    "helping.hands",
+    "agape.website",
+    "ngo-crm-new",
+    "aurelius-radar",
+    "hhfdemo",
+    "ngo-crm-new-vnra",
+    "ashraya-crm-b7x8",
+    "ashraya-crm-bpda",
+    "ashraya-crm",
+    "pipes",
+    "mahanandipipes-main"
+  ]
 }
