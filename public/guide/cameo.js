@@ -34,7 +34,7 @@
     // sitting cross-legged with her laptop on top of the project grid
     { id: 'work', sel: '#pindex button', kind: 'rise', pic: 'laptop', fx: [0.5], show: 0.97, scale: 0.72 },
     // a second memoji, in her own tile among the project cards
-    { id: 'between', sel: '.pslot .pslot-sill', kind: 'rise', pic: 'bust', fx: [0.5], show: 0.9, scale: 1.55 },
+    { id: 'between', sel: '.pslot .pslot-sill', kind: 'rise', pic: 'bust', fx: [0.5], show: 0.9, scale: 1.55, stay: true },
     { id: 'experience', sel: '#experience .jobs > .job:nth-child(3)', kind: 'border', side: 'right', pic: 'peekWave2', at: 0.5, scale: 1.05 },
     // sitting on an edge, legs over the front (only where her legs cover no text)
     { id: 'sit', sel: '#experience .job, #skills .certs, #hire .order, .booth .ticket', kind: 'sit', pic: 'sit', fx: [0.93, 0.9, 0.86, 0.1], seat: 0.64, scale: 0.85 },
@@ -160,7 +160,7 @@
       node.style.overflow = 'visible';
       node.style.clipPath = pl.fade ? 'none' : pl.axis === 'y' ? 'inset(-400px -400px 0 -400px)' : pl.dir > 0 ? 'inset(-400px -400px -400px 0)' : 'inset(-400px 0 -400px -400px)';
       var hands = c.hands ? makeBustHands(b, sz) : null;
-      items.push({ c: c, pl: pl, node: node, im: im, eye: eyeState, hands: hands, v: 0, target: 0, last: -1, top: b.t, bottom: b.t + b.h, refTop: pl.ref.t, refBot: pl.ref.b });
+      items.push({ c: c, pl: pl, node: node, im: im, eye: eyeState, hands: hands, v: c.stay ? 1 : 0, target: 0, last: -1, top: b.t, bottom: b.t + b.h, refTop: pl.ref.t, refBot: pl.ref.b });
     });
   }
 
@@ -168,7 +168,8 @@
   var smooth = function (x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
   var startT = performance.now(), landed = false;
   function targetFor(it) {
-    var vh = innerHeight, top = it.top + pageTop0 - scrollY, c = it.c;            // on-screen y, no layout reads
+    var vh = innerHeight, top = it.top + pageTop0 - scrollY, c = it.c;
+    if (c.stay) return 1;                                                       // stays put in its tile: no rising or sinking on scroll            // on-screen y, no layout reads
     if (c.landing) {                                                           // landing: pops out after load, sinks back as you scroll down
       var appear = performance.now() - startT > 700 ? 1 : 0;
       return appear * (1 - smooth(scrollY / (vh * 0.32)));
