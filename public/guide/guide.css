@@ -1,0 +1,87 @@
+/* Anwesha guide: the 3D character lives on the page itself (not fixed to the screen), so she
+   scrolls with the content. She only stands on open surfaces and her speech bubble opens to the
+   side with free space, so neither covers text. */
+
+/* make room for her: section taglines stack under the heading, freeing the right side */
+.sec-head { flex-direction: column; align-items: flex-start; justify-content: flex-start; }
+.sec-head .tagline { max-width: min(62ch, 58%); }
+@media (max-width: 900px) { .sec-head .tagline { max-width: 62%; } }
+@media (min-width: 901px) {
+  #terminal, #work, #experience, #skills { padding-top: 44px; }
+  .hire { padding-top: 56px; }
+  .booth { padding-top: 64px; }
+}
+@media (max-width: 900px) {
+  #terminal, #work, #experience, #skills { padding-top: 28px; }
+  .booth { padding-top: 40px; }
+  .hire { padding-top: 40px; }
+}
+
+/* room for her between project cards and between job cards (desktop) */
+@media (min-width: 901px) {
+  .pgrid { row-gap: 104px; }
+  .jobs { row-gap: 104px !important; }
+}
+
+/* the character layer lives inside the page, so she scrolls with it */
+.ag-layer { position: absolute; inset: 0; z-index: 6; pointer-events: none; overflow: clip; }
+.ag { position: absolute; left: 0; top: 0; width: 0; height: 0; will-change: transform; }
+.ag-spr { position: absolute; left: 0; bottom: 0; transform-origin: 50% 100%; will-change: transform; }
+.ag-spr img { position: absolute; left: 0; bottom: 0; display: block; max-width: none; transform: translateX(-50%); transition: opacity .19s ease; pointer-events: auto; cursor: pointer; user-select: none; -webkit-user-drag: none; filter: drop-shadow(0 8px 10px rgba(21, 19, 15, .24)); }
+.ag-spr img.fl { transform: translateX(-50%) scaleX(-1); }
+.ag-shadow { position: absolute; left: 0; top: 0; height: 10px; border-radius: 50%; transform: translate(-50%, -50%); background: radial-gradient(closest-side, rgba(21, 19, 15, .32), rgba(21, 19, 15, 0)); }
+.ag-fx { position: absolute; left: 0; top: 0; }
+.ag-key { position: absolute; font: 600 .78rem var(--mono, monospace); color: var(--cg, #2fd08a); animation: ag-key 1.25s ease-out forwards; }
+@keyframes ag-key { from { opacity: 0; transform: translate(0, 0) scale(.7); } 15% { opacity: 1; } to { opacity: 0; transform: translate(var(--dx, 0px), -48px) scale(1.05); } }
+.ag-bubble {
+  position: absolute; left: 0; top: 0; width: max-content; max-width: 240px; opacity: 0; transition: opacity .22s ease;
+  font: 600 .82rem/1.38 var(--body, "IBM Plex Sans", sans-serif); color: #15130f; background: #ffcf33;
+  border: 2.5px solid #15130f; box-shadow: 4px 4px 0 #15130f; padding: 8px 11px;
+}
+.ag-bubble.on { opacity: 1; }
+.ag-bubble small { display: block; font: 500 .68rem/1.3 var(--mono, monospace); letter-spacing: .05em; opacity: .7; margin-top: 2px; }
+.ag-hide {
+  position: fixed; right: max(12px, env(safe-area-inset-right, 0px)); bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 41;
+  font: 600 .7rem var(--mono, monospace); letter-spacing: .06em; background: var(--surface, #fffdf8); color: var(--ink, #15130f);
+  border: 2px solid var(--edge, #15130f); box-shadow: 3px 3px 0 var(--edge, #15130f); padding: 5px 9px; cursor: pointer;
+}
+.ag-confetti { position: fixed; inset: 0; z-index: 40; pointer-events: none; }
+@media (max-width: 900px) { .ag-bubble { font-size: .76rem; max-width: 180px; padding: 6px 9px; } }
+
+/* project cards: a live badge while the recording plays */
+.pcard.playing .pplay { opacity: 1; transform: none; }
+.pcard.playing .pplay::before { width: 8px; height: 8px; border: 0; border-radius: 50%; background: #dd3a34; animation: ag-live 1.2s ease-in-out infinite; }
+@keyframes ag-live { 50% { opacity: .25; } }
+
+/* the 3D model replaces the flat pictures once it has loaded (the pictures stay as the click area) */
+.ag-gl { position: absolute; left: 0; bottom: 0; pointer-events: none; opacity: 0; }
+.ag-3d .ag-spr img { transition: opacity .28s ease, visibility 0s; }
+/* she is always drawn in 3D once it is ready; the flat pictures stay as the invisible click area */
+.ag-3d .ag-spr > img, .ag-3d .ag-fb img { opacity: 0 !important; }
+.ag-3d .ag-gl { opacity: 1; }
+
+/* landing flipbook: all frames stacked, only the current one visible, soft dissolves between them */
+.ag-fb { position: absolute; left: 0; bottom: 0; width: 0; height: 0; }
+.ag-fb img { position: absolute; left: 0; bottom: 0; max-width: none; opacity: 0; transition: opacity .2s linear; pointer-events: none; will-change: opacity; backface-visibility: hidden; }
+.ag-fb img.on { opacity: 1; pointer-events: auto; cursor: pointer; }
+.ag-fbmode .ag-spr > img { opacity: 0 !important; pointer-events: none !important; }
+
+
+/* cameos: pieces of her popping out from behind elements or the screen edge */
+.cm-layer { position: absolute; inset: 0; z-index: 6; pointer-events: none; overflow: clip; }
+.cm { position: absolute; overflow: hidden; visibility: hidden; contain: layout; }
+.cm img, .cm canvas { position: absolute; max-width: none; will-change: transform; transform-origin: 50% 50%; user-select: none; -webkit-user-drag: none; }
+
+/* hide/show toggle: out of the way in the hero, a small icon on phones */
+.ag-hide { display: inline-flex; align-items: center; gap: 6px; transition: opacity .35s cubic-bezier(.22,1,.36,1), translate .35s cubic-bezier(.22,1,.36,1); }
+.ag-hide.away { opacity: 0; translate: 0 10px; pointer-events: none; }
+.ag-hide.off svg { opacity: .45; }
+@media (max-width: 900px) {
+  .ag-hide { width: 36px; height: 36px; padding: 0; justify-content: center; border-radius: 50%; box-shadow: 2px 2px 0 var(--edge, #15130f); }
+  .ag-hide span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+}
+.cm-hand { position: absolute; max-width: none; pointer-events: none; visibility: hidden; opacity: 0; will-change: transform, opacity; filter: drop-shadow(0 2px 2px rgba(0,0,0,.25)); }
+/* she stands on the "Go long" letters: a soft contact shadow under her shoes grounds her */
+.cm-hire::before { content: ''; position: absolute; left: 50%; bottom: -5px; width: 74%; height: 12px; transform: translateX(-50%); background: radial-gradient(closest-side, rgba(0, 0, 0, .7), rgba(0, 0, 0, 0)); pointer-events: none; }
+/* seated on a project-name chip: a contact shadow where she meets it */
+.cm-work::before { content: ''; position: absolute; left: 50%; bottom: -4px; width: 82%; height: 10px; transform: translateX(-50%); background: radial-gradient(closest-side, rgba(0, 0, 0, .75), rgba(0, 0, 0, 0)); pointer-events: none; }
