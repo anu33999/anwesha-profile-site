@@ -222,6 +222,8 @@
     var still = new Image();
     still.onload = function () { if (state.displayed < 0) paint(still); };
     still.src = B + (pic.key === 'terminal' ? 'video/terminal.png?v=9' : 'hq/' + pic.key + '.webp');
+    // these poses stay as still pictures: their old clips turn the head too little to look good
+    if (['a2', 'a6', 'a9'].indexOf(pic.key) > -1) return state;
     if (!pose || !finePtr || reduce) return state;
 
     if (pic.key === 'terminal') {
