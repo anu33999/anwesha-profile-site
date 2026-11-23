@@ -665,7 +665,17 @@
     .swipe-row::-webkit-scrollbar { display: none; }
     .swipe-row > * { flex: 0 0 84%; scroll-snap-align: center; scroll-snap-stop: always; min-width: 0; }
     .swipe-row { touch-action: pan-x pan-y; scroll-behavior: smooth; }
-    #pgrid.swipe-row > .pcard { grid-column: auto !important; grid-row: auto !important; }
+    #pgrid.swipe-row { display: grid !important; grid-auto-flow: column; grid-template-rows: repeat(2, auto); grid-template-columns: none !important; grid-auto-columns: 84%; align-items: stretch; }
+    #pgrid.swipe-row > .pcard { grid-column: auto !important; grid-row: auto !important; flex: none; }
+    /* compact cards so two fit on screen: shorter preview, one-line description, tags only inside Details */
+    #pgrid.swipe-row .pmedia, #pgrid.swipe-row .pcard.big .pmedia { aspect-ratio: 16 / 8.5; min-height: 0; flex: none; }
+    #pgrid.swipe-row .pbar { padding: 6px 10px; font-size: .72rem; }
+    #pgrid.swipe-row .pbody, #pgrid.swipe-row .pcard.big .pbody, #pgrid.swipe-row .pcard:not(.big) .pbody { min-height: 0; padding: 10px 12px 12px; gap: 5px; }
+    #pgrid.swipe-row .pbody h3, #pgrid.swipe-row .pcard.big .pbody h3, #pgrid.swipe-row .pcard.wide .pbody h3 { font-size: 1.05rem; }
+    #pgrid.swipe-row .pbody .path { font-size: .68rem; }
+    #pgrid.swipe-row .pbody .desc { font-size: .8rem; -webkit-line-clamp: 1; }
+    #pgrid.swipe-row .pbody .stack { display: none; }
+    #pgrid.swipe-row .pcard.open .pbody { min-height: 250px; }
     #pgrid.swipe-row > .pslot { display: none; }
     /* certificates: two rows that slide together, two certificates per swipe */
     #skills .certs.swipe-row { display: grid !important; grid-auto-flow: column; grid-template-rows: repeat(2, auto); grid-template-columns: none !important; grid-auto-columns: 80%; align-items: stretch; }
@@ -676,22 +686,17 @@
     .swipe-dots i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .3; transition: opacity .2s, transform .2s; }
     .swipe-dots i.on { opacity: 1; transform: scale(1.3); }
     /* single-line, swipeable rows of chips */
-    .pindex { flex-wrap: nowrap !important; overflow-x: auto; scrollbar-width: none; margin-right: -18px; padding-right: 18px; padding-bottom: 6px; -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); }
+    .pindex { display: flex !important; flex-wrap: wrap !important; gap: 6px; margin-bottom: 20px; }
     .pindex::-webkit-scrollbar { display: none; }
-    .pindex button { flex: 0 0 auto; white-space: nowrap; }
-    /* skills: category tabs, one category's skills shown at a time */
-    .sk-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 4px 0 16px; }
-    .sk-tabs button { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; padding: 9px 10px; font: 700 .7rem var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink); background: var(--surface); border: 2px solid var(--edge); box-shadow: 3px 3px 0 var(--edge); cursor: pointer; text-align: left; transition: transform .15s, box-shadow .15s, background .15s; }
-    .sk-tabs button i { font-style: normal; font-weight: 500; opacity: .6; letter-spacing: 0; text-transform: none; }
-    .sk-tabs button[aria-selected="true"] { background: var(--yellow); color: #15130f; transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--edge); }
-    .sk-tabs button[aria-selected="true"] i { opacity: .75; }
-    .sk-tabs button:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
-    #skills .skills.tabbed .skillrow { display: none; }
-    #skills .skills.tabbed .skillrow.on { display: block; }
-    #skills .skills.tabbed .skillrow h3 { display: none; }
-    #skills .skills.tabbed .skillrow.on .pills { animation: sk-in .3s cubic-bezier(.22,1,.36,1); }
-    @keyframes sk-in { from { opacity: 0; transform: translateY(6px); } }
-    @media (prefers-reduced-motion: reduce) { #skills .skills.tabbed .skillrow.on .pills { animation: none; } }
+    .pindex button { flex: 0 0 auto; white-space: nowrap; font-size: .68rem; padding: 4px 8px; gap: 6px; box-shadow: 2px 2px 0 var(--edge); }
+    /* skills: every category as a small card, two per row, all skills visible */
+    #skills .skills { display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-auto-flow: row dense; gap: 10px; }
+    #skills .skillrow { display: block; padding: 10px 10px 11px; background: var(--surface); border: 2px solid var(--edge); box-shadow: 3px 3px 0 var(--edge); }
+    #skills .skillrow.sk-wide { grid-column: span 2; }
+    #skills .skillrow h3 { padding: 0 0 7px; font-size: .66rem; letter-spacing: .1em; }
+    #skills .skillrow h3 i { font-style: normal; opacity: .55; font-weight: 500; margin-left: 4px; }
+    #skills .skillrow .pills { gap: 5px; }
+    #skills .skillrow .pill { font-size: .7rem; padding: 2px 7px; border-width: 1.5px; line-height: 1.35; }
   }
   html.anim .hstat { animation: in-fade .9s .74s cubic-bezier(.22,1,.36,1) both; }
   @media (max-width: 560px) {
@@ -1846,7 +1851,7 @@
 /* Phones: project cards and certificates swipe sideways, with a "3 / 13 · swipe" counter and dots. */
 (function () {
   var mq = matchMedia('(max-width: 640px)');
-  var rows = [{ el: document.getElementById('pgrid'), item: '.pcard', name: 'projects', per: 1 }, { el: document.querySelector('#skills .certs'), item: '.cert', name: 'certificates', per: 2 }];
+  var rows = [{ el: document.getElementById('pgrid'), item: '.pcard', name: 'projects', per: 2 }, { el: document.querySelector('#skills .certs'), item: '.cert', name: 'certificates', per: 2 }];
   function setup(r) {
     if (!r.el) return;
     var on = mq.matches;
@@ -1892,30 +1897,17 @@
 </script>
 
 <script>
-/* Phones: skills become category tabs (3 x 2 tiles); the chosen category's skills show underneath. */
+/* Phones: skills show as small category cards, two per row; the biggest categories take a full row. */
 (function () {
-  var mq = matchMedia('(max-width: 640px)'), box = document.querySelector('#skills .skills'); if (!box) return;
-  var rows = [].slice.call(box.querySelectorAll('.skillrow')), bar = null, current = 0;
-  rows.forEach(function (r, i) { r.id = r.id || 'sk-panel-' + i; r.setAttribute('role', 'tabpanel'); });
-  function select(i, focus) {
-    current = i;
-    rows.forEach(function (r, k) { r.classList.toggle('on', k === i); });
-    if (bar) [].forEach.call(bar.children, function (b, k) { b.setAttribute('aria-selected', String(k === i)); b.tabIndex = k === i ? 0 : -1; if (k === i && focus) b.focus(); });
-  }
+  var mq = matchMedia('(max-width: 640px)'), rows = [].slice.call(document.querySelectorAll('#skills .skillrow'));
   function apply() {
-    if (mq.matches && !bar) {
-      bar = document.createElement('div'); bar.className = 'sk-tabs'; bar.setAttribute('role', 'tablist'); bar.setAttribute('aria-label', 'Skill categories');
-      rows.forEach(function (r, i) {
-        var b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('aria-controls', r.id);
-        b.innerHTML = '<span></span><i></i>'; b.firstChild.textContent = r.querySelector('h3').textContent; b.lastChild.textContent = r.querySelectorAll('.pill').length + ' skills';
-        b.addEventListener('click', function () { select(i); });
-        b.addEventListener('keydown', function (e) { var n = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0; if (n) { e.preventDefault(); select((current + n + rows.length) % rows.length, true); } });
-        bar.appendChild(b);
-      });
-      box.before(bar); box.classList.add('tabbed'); select(current);
-    } else if (!mq.matches && bar) {
-      bar.remove(); bar = null; box.classList.remove('tabbed'); rows.forEach(function (r) { r.classList.remove('on'); });
-    }
+    rows.forEach(function (r) {
+      var n = r.querySelectorAll('.pill').length, h = r.querySelector('h3'), longest = Math.max.apply(null, [].map.call(r.querySelectorAll('.pill'), function (p) { return p.textContent.length; }));
+      r.classList.toggle('sk-wide', mq.matches && (n > 9 || longest > 22));
+      var c = h.querySelector('i');
+      if (mq.matches && !c) { c = document.createElement('i'); c.textContent = n; h.appendChild(c); }
+      if (!mq.matches && c) c.remove();
+    });
   }
   (mq.addEventListener ? mq.addEventListener('change', apply) : mq.addListener(apply));
   apply();
