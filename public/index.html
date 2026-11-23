@@ -667,7 +667,9 @@
     .swipe-row { touch-action: pan-x pan-y; scroll-behavior: smooth; }
     #pgrid.swipe-row > .pcard { grid-column: auto !important; grid-row: auto !important; }
     #pgrid.swipe-row > .pslot { display: none; }
-    #skills .certs.swipe-row > .cert { flex-basis: 78%; }
+    /* certificates: two rows that slide together, two certificates per swipe */
+    #skills .certs.swipe-row { display: grid !important; grid-auto-flow: column; grid-template-rows: repeat(2, auto); grid-template-columns: none !important; grid-auto-columns: 80%; align-items: stretch; }
+    #skills .certs.swipe-row > .cert { flex: none; scroll-snap-align: center; }
     .swipe-meta { display: flex; justify-content: space-between; align-items: center; margin: -4px 0 18px; font: 600 .72rem var(--mono); letter-spacing: .06em; color: var(--muted); }
     .swipe-meta b { color: var(--ink); font-weight: 700; }
     .swipe-dots { display: flex; gap: 5px; }
@@ -1844,7 +1846,7 @@
 /* Phones: project cards and certificates swipe sideways, with a "3 / 13 · swipe" counter and dots. */
 (function () {
   var mq = matchMedia('(max-width: 640px)');
-  var rows = [{ el: document.getElementById('pgrid'), item: '.pcard', name: 'projects' }, { el: document.querySelector('#skills .certs'), item: '.cert', name: 'certificates' }];
+  var rows = [{ el: document.getElementById('pgrid'), item: '.pcard', name: 'projects', per: 1 }, { el: document.querySelector('#skills .certs'), item: '.cert', name: 'certificates', per: 2 }];
   function setup(r) {
     if (!r.el) return;
     var on = mq.matches;
@@ -1856,15 +1858,18 @@
       r.el.after(r.meta);
       r.el.addEventListener('scroll', function () { update(r); }, { passive: true });
     }
-    r.meta.innerHTML = '<span><b>1</b> / ' + items.length + ' ' + r.name + ' · swipe →</span><span class="swipe-dots">' + items.map(function () { return '<i></i>'; }).join('') + '</span>';
+    var pages = Math.ceil(items.length / r.per), dots = '';
+    for (var d = 0; d < pages; d++) dots += '<i></i>';
+    r.meta.innerHTML = '<span>' + (r.per > 1 ? items.length + ' ' + r.name + ' · page <b>1</b> / ' + pages : '<b>1</b> / ' + items.length + ' ' + r.name) + ' · swipe →</span><span class="swipe-dots">' + dots + '</span>';
     update(r);
   }
   function update(r) {
     if (!r.meta) return;
     var items = [].slice.call(r.el.querySelectorAll(':scope > ' + r.item)), mid = r.el.getBoundingClientRect().left + r.el.clientWidth / 2, best = 0, bd = 1e9;
     items.forEach(function (it, i) { var b = it.getBoundingClientRect(), d = Math.abs(b.left + b.width / 2 - mid); if (d < bd) { bd = d; best = i; } });
-    r.meta.querySelector('b').textContent = best + 1;
-    [].forEach.call(r.meta.querySelectorAll('.swipe-dots i'), function (d, i) { d.classList.toggle('on', i === best); });
+    var page = Math.floor(best / r.per);
+    r.meta.querySelector('b').textContent = r.per > 1 ? page + 1 : best + 1;
+    [].forEach.call(r.meta.querySelectorAll('.swipe-dots i'), function (d, i) { d.classList.toggle('on', i === (r.per > 1 ? page : best)); });
   }
   function all() { rows.forEach(setup); }
   (mq.addEventListener ? mq.addEventListener('change', all) : mq.addListener(all));
