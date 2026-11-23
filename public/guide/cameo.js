@@ -170,7 +170,9 @@
   function targetFor(it) {
     var vh = innerHeight, top = it.top + pageTop0 - scrollY, c = it.c;
     if (c.stay) return 1;                                                       // stays put in its tile: no rising or sinking on scroll            // on-screen y, no layout reads
-    if (c.landing) {                                                           // landing: pops out after load, sinks back as you scroll down
+    // landing: pops out after load and sinks as you scroll down, but only when its window is on the first screen.
+    // On phones the window starts lower, so she behaves like the others: out while it's on screen.
+    if (c.landing && it.top + pageTop0 < vh * 0.9) {
       var appear = performance.now() - startT > 700 ? 1 : 0;
       return appear * (1 - smooth(scrollY / (vh * 0.32)));
     }
