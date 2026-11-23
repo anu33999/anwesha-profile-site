@@ -653,6 +653,9 @@
   .bm-stand::after { content: ''; position: absolute; left: -18px; right: -18px; bottom: 0; height: 5px; background: #15130f; border-radius: 2px 2px 0 0; }
   .bm-her { position: absolute; bottom: -2px; left: 4px; height: 122px; width: auto; z-index: 2; }
   @media (max-width: 560px) { .booth-mini { right: 10px; transform: scale(.82); transform-origin: right bottom; } }
+  /* when the booth cards stack, give the monitor scene its own space above the calculator so it never covers the card above */
+  @media (max-width: 900px) { .booth .ticket[data-tilt] { margin-top: 150px; } }
+  @media (max-width: 560px) { .booth .ticket[data-tilt] { margin-top: 126px; } }
 
   /* ---------- phones only: long lists become swipe rows, so the page is far shorter ---------- */
   @media (max-width: 640px) {
@@ -660,7 +663,8 @@
     .swipe-row { align-items: flex-start; }
     .pcard:not(.open) .pmore { visibility: hidden; }          /* the closed About drawer no longer peeks out under Details */
     .swipe-row::-webkit-scrollbar { display: none; }
-    .swipe-row > * { flex: 0 0 84%; scroll-snap-align: center; min-width: 0; }
+    .swipe-row > * { flex: 0 0 84%; scroll-snap-align: center; scroll-snap-stop: always; min-width: 0; }
+    .swipe-row { touch-action: pan-x pan-y; scroll-behavior: smooth; }
     #pgrid.swipe-row > .pcard { grid-column: auto !important; grid-row: auto !important; }
     #pgrid.swipe-row > .pslot { display: none; }
     #skills .certs.swipe-row > .cert { flex-basis: 78%; }
@@ -670,9 +674,13 @@
     .swipe-dots i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .3; transition: opacity .2s, transform .2s; }
     .swipe-dots i.on { opacity: 1; transform: scale(1.3); }
     /* single-line, swipeable rows of chips */
-    .pindex, #skills .pills { flex-wrap: nowrap !important; overflow-x: auto; scrollbar-width: none; margin-right: -18px; padding-right: 18px; padding-bottom: 6px; -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); }
-    .pindex::-webkit-scrollbar, #skills .pills::-webkit-scrollbar { display: none; }
-    .pindex button, #skills .pill { flex: 0 0 auto; white-space: nowrap; }
+    .pindex { flex-wrap: nowrap !important; overflow-x: auto; scrollbar-width: none; margin-right: -18px; padding-right: 18px; padding-bottom: 6px; -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); }
+    .pindex::-webkit-scrollbar { display: none; }
+    .pindex button { flex: 0 0 auto; white-space: nowrap; }
+    /* skills: first four per category, the rest behind a "+N more" chip */
+    #skills .pills.folded .pill:nth-child(n+5) { display: none; }
+    #skills .pill-more { font: 600 .78rem var(--mono); padding: 4px 10px; border: 2px dashed var(--edge); background: transparent; color: var(--ink); cursor: pointer; }
+    #skills .pill-more:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
   }
   html.anim .hstat { animation: in-fade .9s .74s cubic-bezier(.22,1,.36,1) both; }
   @media (max-width: 560px) {
@@ -1123,7 +1131,8 @@
       var so = document.createElement('source'); so.src = 'projects/' + v + '.mp4'; so.type = 'video/mp4'; vid.appendChild(so);
       media.appendChild(vid); c._vid = vid;
     } else media.appendChild(el('div', 'pph', p.file));
-    if (BIG.indexOf(p.file) > -1 && live && !NOFRAME.test(live)) {           // the real site, running inside the card
+    // phones show the recorded preview instead: three live sites inside cards use too much memory and the phone reloads the page
+    if (BIG.indexOf(p.file) > -1 && live && !NOFRAME.test(live) && !matchMedia('(max-width: 640px)').matches) {           // the real site, running inside the card
       c.classList.add('big');
       var fr = el('div', 'pframe'), ifr = document.createElement('iframe');
       ifr.title = p.title + ' (live)'; ifr.setAttribute('loading', 'lazy'); ifr.setAttribute('tabindex', '-1'); ifr.setAttribute('aria-hidden', 'true');
@@ -1853,6 +1862,41 @@
   // the project cards arrive after load: set up again when they do
   var g = rows[0].el; if (g && window.MutationObserver) new MutationObserver(function () { setup(rows[0]); }).observe(g, { childList: true });
   all();
+})();
+</script>
+
+<script>
+/* Phones: if a finger moved while touching a swipe row, the touch was a swipe, so the card doesn't treat it as a tap. */
+(function () {
+  var sx = 0, sy = 0, moved = false;
+  document.addEventListener('touchstart', function (e) { var t = e.touches[0]; sx = t.clientX; sy = t.clientY; moved = false; }, { passive: true, capture: true });
+  document.addEventListener('touchmove', function (e) { var t = e.touches[0]; if (Math.abs(t.clientX - sx) > 8 || Math.abs(t.clientY - sy) > 8) moved = true; }, { passive: true, capture: true });
+  document.addEventListener('click', function (e) {
+    if (moved && e.target.closest && e.target.closest('.swipe-row')) { e.preventDefault(); e.stopPropagation(); moved = false; }
+  }, true);
+})();
+</script>
+
+<script>
+/* Phones: each skills category shows its first four skills and a "+N more" chip that reveals the rest. */
+(function () {
+  var mq = matchMedia('(max-width: 640px)');
+  var rows = [].slice.call(document.querySelectorAll('#skills .pills'));
+  function apply() {
+    rows.forEach(function (row) {
+      var pills = row.querySelectorAll('.pill'), extra = pills.length - 4, btn = row.querySelector('.pill-more');
+      if (!mq.matches || extra <= 1) { row.classList.remove('folded'); if (btn) btn.remove(); return; }
+      if (!btn) {
+        btn = document.createElement('button'); btn.type = 'button'; btn.className = 'pill-more';
+        btn.addEventListener('click', function () { var f = row.classList.toggle('folded'); label(); btn.setAttribute('aria-expanded', String(!f)); });
+        row.appendChild(btn); row.classList.add('folded');
+      }
+      function label() { btn.textContent = row.classList.contains('folded') ? '+' + extra + ' more' : 'show less'; }
+      label(); btn.setAttribute('aria-expanded', String(!row.classList.contains('folded')));
+    });
+  }
+  (mq.addEventListener ? mq.addEventListener('change', apply) : mq.addListener(apply));
+  apply();
 })();
 </script>
 <script src="guide/cameo.js?v=59" defer></script>
