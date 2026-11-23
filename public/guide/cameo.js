@@ -32,7 +32,7 @@
     // over the top of the terminal, fingers hooked on its edge
     { id: 'terminal', sel: '#terminal .win', kind: 'rise', pic: 'bust', fx: [0.86, 0.8, 0.72, 0.62], show: 0.78, scale: 1.1, hands: true },
     // sitting cross-legged with her laptop on top of the project grid
-    { id: 'work', sel: '#pindex button', kind: 'rise', pic: 'laptop', fx: [0.5], show: 0.97, scale: 0.72 },
+    { id: 'work', sel: '#pindex button', kind: 'rise', pic: 'laptop', fx: [0.5], show: 0.97, scale: 0.82 },
     // a second memoji, in her own tile among the project cards
     { id: 'between', sel: '.pslot .pslot-sill', kind: 'rise', pic: 'bust', fx: [0.5], show: 0.9, scale: 1.55, stay: true },
     { id: 'experience', sel: '#experience .jobs > .job:nth-child(3)', kind: 'border', side: 'right', pic: 'peekWave2', at: 0.5, scale: 1.05 },
