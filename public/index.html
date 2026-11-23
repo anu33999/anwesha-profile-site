@@ -677,10 +677,19 @@
     .pindex { flex-wrap: nowrap !important; overflow-x: auto; scrollbar-width: none; margin-right: -18px; padding-right: 18px; padding-bottom: 6px; -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); }
     .pindex::-webkit-scrollbar { display: none; }
     .pindex button { flex: 0 0 auto; white-space: nowrap; }
-    /* skills: first four per category, the rest behind a "+N more" chip */
-    #skills .pills.folded .pill:nth-child(n+5) { display: none; }
-    #skills .pill-more { font: 600 .78rem var(--mono); padding: 4px 10px; border: 2px dashed var(--edge); background: transparent; color: var(--ink); cursor: pointer; }
-    #skills .pill-more:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+    /* skills: category tabs, one category's skills shown at a time */
+    .sk-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 4px 0 16px; }
+    .sk-tabs button { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; padding: 9px 10px; font: 700 .7rem var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink); background: var(--surface); border: 2px solid var(--edge); box-shadow: 3px 3px 0 var(--edge); cursor: pointer; text-align: left; transition: transform .15s, box-shadow .15s, background .15s; }
+    .sk-tabs button i { font-style: normal; font-weight: 500; opacity: .6; letter-spacing: 0; text-transform: none; }
+    .sk-tabs button[aria-selected="true"] { background: var(--yellow); color: #15130f; transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--edge); }
+    .sk-tabs button[aria-selected="true"] i { opacity: .75; }
+    .sk-tabs button:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+    #skills .skills.tabbed .skillrow { display: none; }
+    #skills .skills.tabbed .skillrow.on { display: block; }
+    #skills .skills.tabbed .skillrow h3 { display: none; }
+    #skills .skills.tabbed .skillrow.on .pills { animation: sk-in .3s cubic-bezier(.22,1,.36,1); }
+    @keyframes sk-in { from { opacity: 0; transform: translateY(6px); } }
+    @media (prefers-reduced-motion: reduce) { #skills .skills.tabbed .skillrow.on .pills { animation: none; } }
   }
   html.anim .hstat { animation: in-fade .9s .74s cubic-bezier(.22,1,.36,1) both; }
   @media (max-width: 560px) {
@@ -1878,22 +1887,30 @@
 </script>
 
 <script>
-/* Phones: each skills category shows its first four skills and a "+N more" chip that reveals the rest. */
+/* Phones: skills become category tabs (3 x 2 tiles); the chosen category's skills show underneath. */
 (function () {
-  var mq = matchMedia('(max-width: 640px)');
-  var rows = [].slice.call(document.querySelectorAll('#skills .pills'));
+  var mq = matchMedia('(max-width: 640px)'), box = document.querySelector('#skills .skills'); if (!box) return;
+  var rows = [].slice.call(box.querySelectorAll('.skillrow')), bar = null, current = 0;
+  rows.forEach(function (r, i) { r.id = r.id || 'sk-panel-' + i; r.setAttribute('role', 'tabpanel'); });
+  function select(i, focus) {
+    current = i;
+    rows.forEach(function (r, k) { r.classList.toggle('on', k === i); });
+    if (bar) [].forEach.call(bar.children, function (b, k) { b.setAttribute('aria-selected', String(k === i)); b.tabIndex = k === i ? 0 : -1; if (k === i && focus) b.focus(); });
+  }
   function apply() {
-    rows.forEach(function (row) {
-      var pills = row.querySelectorAll('.pill'), extra = pills.length - 4, btn = row.querySelector('.pill-more');
-      if (!mq.matches || extra <= 1) { row.classList.remove('folded'); if (btn) btn.remove(); return; }
-      if (!btn) {
-        btn = document.createElement('button'); btn.type = 'button'; btn.className = 'pill-more';
-        btn.addEventListener('click', function () { var f = row.classList.toggle('folded'); label(); btn.setAttribute('aria-expanded', String(!f)); });
-        row.appendChild(btn); row.classList.add('folded');
-      }
-      function label() { btn.textContent = row.classList.contains('folded') ? '+' + extra + ' more' : 'show less'; }
-      label(); btn.setAttribute('aria-expanded', String(!row.classList.contains('folded')));
-    });
+    if (mq.matches && !bar) {
+      bar = document.createElement('div'); bar.className = 'sk-tabs'; bar.setAttribute('role', 'tablist'); bar.setAttribute('aria-label', 'Skill categories');
+      rows.forEach(function (r, i) {
+        var b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('aria-controls', r.id);
+        b.innerHTML = '<span></span><i></i>'; b.firstChild.textContent = r.querySelector('h3').textContent; b.lastChild.textContent = r.querySelectorAll('.pill').length + ' skills';
+        b.addEventListener('click', function () { select(i); });
+        b.addEventListener('keydown', function (e) { var n = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0; if (n) { e.preventDefault(); select((current + n + rows.length) % rows.length, true); } });
+        bar.appendChild(b);
+      });
+      box.before(bar); box.classList.add('tabbed'); select(current);
+    } else if (!mq.matches && bar) {
+      bar.remove(); bar = null; box.classList.remove('tabbed'); rows.forEach(function (r) { r.classList.remove('on'); });
+    }
   }
   (mq.addEventListener ? mq.addEventListener('change', apply) : mq.addListener(apply));
   apply();
